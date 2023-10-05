@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutternews/helper/data.dart';
@@ -153,54 +151,61 @@ class _HomeState extends State<Home> {
               child: CircularProgressIndicator(),
             )
           : Container(
-              child: Column(
-                children: <Widget>[
-                  // Categories
-                  Container(
-                    height: 70,
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              children: <Widget>[
+                // Categories
+                Container(
+                  height: 70,
+                  child: ListView.builder(
+                    itemCount: categories.length,
+                    shrinkWrap: true,
+                    physics: ClampingScrollPhysics(),
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) => CategoryTile(
+                      imageUrl: categories[index].imageUrl,
+                      CategoryName: categories[index].CategoryName,
+                    ),
+                  ),
+                ),
+                // Blogs
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.only(top: 16),
                     child: ListView.builder(
-                      itemCount: categories.length,
-                      shrinkWrap: true,
-                      physics: ClampingScrollPhysics(),
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) => CategoryTile(
-                        imageUrl: categories[index].imageUrl,
-                        CategoryName: categories[index].CategoryName,
-                      ),
+                      itemCount: articles.length,
+                      itemBuilder: (context, index) {
+                        return BlogTile(
+                          imageUrl: articles[index].urlToImage,
+                          title: articles[index].title,
+                          desc: articles[index].description,
+                          url: articles[index].url,
+                          // content:articles[index].content,
+                        );
+                      },
                     ),
                   ),
-                  // Blogs
-                  Expanded(
-                    child: Container(
-                      padding: const EdgeInsets.only(top: 16),
-                      child: ListView.builder(
-                        itemCount: articles.length,
-                        itemBuilder: (context, index) {
-                          return BlogTile(
-                            imageUrl: articles[index].urlToImage,
-                            title: articles[index].title,
-                            desc: articles[index].description,
-                            url: articles[index].url,
-                            // content:articles[index].content,
-                          );
-                        },
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
+          ),
     );
   }
 }
 
 class CategoryTile extends StatelessWidget {
-  final imageUrl, CategoryName;
-  CategoryTile({this.imageUrl, this.CategoryName});
+  final String imageUrl, CategoryName;
+  CategoryTile({required this.imageUrl, required this.CategoryName});
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {},
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    CategoryNews(category: CategoryName.toLowerCase())));
+      },
       child: Container(
         margin: EdgeInsets.only(right: 16),
         child: Stack(
